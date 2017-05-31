@@ -10,3 +10,9 @@ Neural Network for Image Classification final project for UCLA M156: Machine Lea
 	Caltech 101, 28x28 Silhouettes
 	
 DUNLAP, LAUREN • HU, CARSON • LIU, JIACHEN
+
+
+***
+Please install scripy by using 
+$sudo pip install scipy
+
