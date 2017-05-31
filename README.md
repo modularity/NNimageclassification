@@ -16,3 +16,10 @@ DUNLAP, LAUREN • HU, CARSON • LIU, JIACHEN
 Please install scripy by using 
 $sudo pip install scipy
 
+Stuff to install possibly:
+keras
+tensorflow
+tflearn
+pandas
+opencv
+imutils
