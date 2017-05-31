@@ -10,3 +10,9 @@ Neural Network for Image Classification final project for UCLA M156: Machine Lea
 	Caltech 101, 28x28 Silhouettes
 	
 DUNLAP, LAUREN • HU, CARSON • LIU, JIACHEN
+
+
+list of website file correspondence:
+http://www.pyimagesearch.com/2016/09/26/a-simple-neural-network-with-python-and-keras/  -- kerasNN
+
+https://medium.com/@ageitgey/machine-learning-is-fun-part-3-deep-learning-and-convolutional-neural-networks-f40359318721 -- mediumNN
