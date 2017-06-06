@@ -26,10 +26,11 @@ def load_data():
     val = zip(val_inputs, val_labels.flatten())
     test=zip(test_inputs, test_labels.flatten())
     return (train, val, test)
-    
+
 def vectorized_result(j):
     e = np.zeros((101,1))
     e[j] = 1.0
     return e
     
+
     

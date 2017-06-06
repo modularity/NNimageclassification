@@ -242,11 +242,7 @@ class Network(object):
         # that Python can use negative indices in lists.
         for l in xrange(2, self.num_layers):
             z = zs[-l]
-            
-            if self.func == sigmoid:
-                sp = sigmoid_prime(z)
-            else:
-                sp = softmax_prime(z)
+            sp = self.func(z, True)
             #sp = sigmoid_prime(z)
             #sp=softmax_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
@@ -338,19 +334,25 @@ def vectorized_result(j):
     return e
 
 
-def sigmoid(z):
+def sigmoid(z, derivative=False):
     """The sigmoid function."""
-    return 1.0/(1.0+np.exp(-z))
+    if derivative:
+        return sigmoid(z) * (1 - sigmoid(z))
+    else:
+        return 1.0/(1.0+np.exp(-z))
 
 def sigmoid_prime(z):
     """Derivative of the sigmoid function."""
     return sigmoid(z)*(1-sigmoid(z))
 
-def softmax(x):
-    """Compute the softmax of vector x in a numerically stable way."""
-    shiftx = x - np.max(x)
-    exps = np.exp(shiftx)
-    return exps / np.sum(exps)
+def softmax(x, derivative=False):
+    if derivative:
+        return np.ones(z.shape)
+    else:
+        """Compute the softmax of vector x in a numerically stable way."""
+        shiftx = x - np.max(x)
+        exps = np.exp(shiftx)
+        return exps / np.sum(exps)
 
 #def softmax(z):
 #    num = np.exp(z) 

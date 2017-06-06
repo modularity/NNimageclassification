@@ -1,5 +1,6 @@
 #sample of how to initialize
 
+
 import network3
 import mnist_loader
 
@@ -11,5 +12,36 @@ net=network3.Network([784,442,101], activationFunc=network3.sigmoid)
 #Anyways the result for this was accurancy: 1468/2307. theres some overfitting since we're using that as our evaluation data
 
 net.SGD(train,30,10,0.5,5,valid)
-print net.accuracy(test)
+#print net.accuracy(test)
 #the way you're supposed to do it. 61.64% accuracy on test data. Had 61.97% accuracy on validation data, 82% accuracy on training data
+#matrices: (training cost, training acc, eval cost, eval acc): http://i.imgur.com/wLlRcPY.png. in the future i'll probably save it to a file
+
+#net.SGD(train,30,10,0.3,5,valid)
+#print net.accuracy(test)
+#Decreasing learning rate to 0.3. Had 98% accuracy on training data, like 66% accuracy on validation data.
+#1498 / 2307: 64.93% on test data, 66% on validation data   http://i.imgur.com/OHxnRtS.png
+#slightly better but severe overfitting seems to be occurring
+
+#net.SGD(train,30,10,0.3,10,valid)
+#print net.accuracy(test)
+#1500/2307, 4076/4100 acc on training, 1501/2264 for validation
+
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,100,0.3,5,valid) 
+#thefile=open('resBatch100LrnRate0pt3Reg5.txt','w') #specify a new file for each trial.
+
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,1,5,valid) 
+#didn't let it complete because it was obviously bad. cost at 0.9285, wasn't changing
+
+for item in trainCost:
+	thefile.write(str(item) + ",")
+thefile.write("\n")
+for item in trainAcc:
+	thefile.write(str(item) + ",")
+thefile.write("\n")
+for item in validCost:
+	thefile.write(str(item) + ",")
+thefile.write("\n")
+for item in validAcc:
+	thefile.write(str(item) + ",")
+
+#lines are printed in order of train cost, train acc, validcost, validacc
