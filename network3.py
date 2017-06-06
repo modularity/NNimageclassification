@@ -51,7 +51,10 @@ class CrossEntropyCost(object):
         to the correct value (0.0).
 
         """
-        return np.sum(np.nan_to_num(-y*np.log(a)-(1-y)*np.log(1-a)))
+        if a.ndim == 1:
+            a = a[np.newaxis]
+        return np.sum(-np.sum(y * np.log(a),axis=1))
+      #  return np.sum(np.nan_to_num(-y*np.log(a)-(1-y)*np.log(1-a)))
 
     @staticmethod
     def delta(z, a, y):
@@ -67,7 +70,7 @@ class CrossEntropyCost(object):
 #### Main Network class
 class Network(object):
 
-    def __init__(self, sizes, cost=CrossEntropyCost):
+    def __init__(self, sizes, activationFunc, cost=CrossEntropyCost):
         """The list ``sizes`` contains the number of neurons in the respective
         layers of the network.  For example, if the list was [2, 3, 1]
         then it would be a three-layer network, with the first layer
@@ -82,6 +85,7 @@ class Network(object):
         self.sizes = sizes
         self.default_weight_initializer()
         self.cost=cost
+        self.func = activationFunc
 
     def default_weight_initializer(self):
         """Initialize each weight using a Gaussian distribution with mean 0
@@ -123,17 +127,18 @@ class Network(object):
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
         for b, w in zip(self.biases, self.weights):
-            a = sigmoid(np.dot(w, a)+b)
+            a = self.func(np.dot(w,a) + b)
+            #a = sigmoid(np.dot(w, a)+b)
             #a = softmax(np.dot(w, a)+b)
         return a
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             lmbda = 0.0,
             evaluation_data=None,
-            monitor_evaluation_cost=False,
-            monitor_evaluation_accuracy=False,
-            monitor_training_cost=False,
-            monitor_training_accuracy=False):
+            monitor_evaluation_cost=True,
+            monitor_evaluation_accuracy=True,
+            monitor_training_cost=True,
+            monitor_training_accuracy=True):
         """Train the neural network using mini-batch stochastic gradient
         descent.  The ``training_data`` is a list of tuples ``(x, y)``
         representing the training inputs and the desired outputs.  The
@@ -221,7 +226,8 @@ class Network(object):
         for b, w in zip(self.biases, self.weights):
             z = np.dot(w, activation)+b
             zs.append(z)
-            activation = sigmoid(z)
+            activation = self.func(z)
+            #activation = sigmoid(z)
             #activation = softmax(z)
             activations.append(activation)
         # backward pass
@@ -236,7 +242,12 @@ class Network(object):
         # that Python can use negative indices in lists.
         for l in xrange(2, self.num_layers):
             z = zs[-l]
-            sp = sigmoid_prime(z)
+            
+            if self.func == sigmoid:
+                sp = sigmoid_prime(z)
+            else:
+                sp = softmax_prime(z)
+            #sp = sigmoid_prime(z)
             #sp=softmax_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
@@ -335,9 +346,15 @@ def sigmoid_prime(z):
     """Derivative of the sigmoid function."""
     return sigmoid(z)*(1-sigmoid(z))
 
-def softmax(z):
-    num = np.exp(z) 
-    return num / sum(num)
+def softmax(x):
+    """Compute the softmax of vector x in a numerically stable way."""
+    shiftx = x - np.max(x)
+    exps = np.exp(shiftx)
+    return exps / np.sum(exps)
+
+#def softmax(z):
+#    num = np.exp(z) 
+#    return num / sum(num)
     
 def softmax_prime(z):
-    return softmax(z) - np.exp(z)
+    return np.ones(z.shape)
