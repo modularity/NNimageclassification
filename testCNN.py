@@ -31,6 +31,8 @@ X = pad.train_data
 Y = pad.train_labels
 X_test = pad.test_data
 Y_test = pad.test_labels
+val_data = pad.val_data
+val_labels = pad.val_labels
 
 img_prep = ImagePreprocessing()
 img_prep.add_featurewise_zero_center()
@@ -115,15 +117,35 @@ X_test = newXT
 X_test = np.array(X_test)
 X_test = X_test.astype('float32')
 
+
+
+newVal = []
+tempValLabel = []
+for counter in range(len(val_data)):
+	newVal.append(val_data[counter].reshape(28,28))
+
+newVal = np.array(newVal)
+newVal = newVal.astype('float32')
+
+for counter in range(len(val_labels)):
+	tempVar = resizeData(val_labels[counter][0])
+	tempValLabel.append(tempVar)
+
+newValLabel = tempValLabel
+newValLabel = np.array(newValLabel)
+newValLabel = newValLabel.astype('float32')
+
+
 # Wrap the network in a model object
-model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='bird-classifier.tfl.ckpt')
+model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='object-classifier.ckpt')
 
 # Train it! We'll do 50 training passes and monitor it as it goes.
-model.fit(X, Y, n_epoch=50, shuffle=True, validation_set=(X_test, Y_test),
+model.fit(X, Y, n_epoch=50, shuffle=True, validation_set=(newVal, newValLabel),
           show_metric=True, batch_size=50,
-          snapshot_epoch=True,
-          run_id='bird-classifier')
+          snapshot_epoch=False,
+          run_id='object-classifier')
 
 # Save model when training is complete to a file
-model.save("bird-classifier.tfl")
-print("Network trained and saved as bird-classifier.tfl!")
+model.save("object-classifier")
+
+print("Network trained and saved as object-classifier!")
