@@ -51,19 +51,19 @@ network = input_data(shape=[None, 28, 28],
                      data_augmentation=img_aug)
 
 # Step 1: Convolution
-network = conv_1d(network, 28, 2, activation='relu')
+network = conv_1d(network, 28, 3, activation='relu')
 
 # Step 2: Max pooling
-network = max_pool_1d(network, 1)
+network = max_pool_1d(network, 2)
 
 # Step 3: Convolution again
-network = conv_1d(network, 56, 2, activation='relu')
+network = conv_1d(network, 56, 3, activation='relu')
 
 # Step 4: Convolution yet again
-network = conv_1d(network, 56, 2, activation='relu')
+network = conv_1d(network, 56, 3, activation='relu')
 
 # Step 5: Max pooling again
-network = max_pool_1d(network, 1)
+network = max_pool_1d(network, 2)
 
 # Step 6: Fully-connected 392 node neural network
 network = fully_connected(network, 392, activation='relu')
@@ -72,7 +72,7 @@ network = fully_connected(network, 392, activation='relu')
 network = dropout(network, 0.5)
 
 # Step 8: Fully-connected neural network with two outputs (0=isn't a bird, 1=is a bird) to make the final prediction
-network = fully_connected(network, 1, activation='softmax')
+network = fully_connected(network, 2, activation='softmax')
 
 # Tell tflearn how we want to train the network
 network = regression(network, optimizer='adam',
