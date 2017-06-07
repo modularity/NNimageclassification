@@ -51,7 +51,7 @@ class CrossEntropyCost(object):
         to the correct value (0.0).
 
         """
-        if a.ndim == 1:
+        if a.ndim == 1: #ensure that it's a column vector
             a = a[np.newaxis]
         return np.sum(-np.sum(y * np.log(a),axis=1))
       #  return np.sum(np.nan_to_num(-y*np.log(a)-(1-y)*np.log(1-a)))
@@ -126,11 +126,18 @@ class Network(object):
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
-        for b, w in zip(self.biases, self.weights):
-            a = self.func(np.dot(w,a) + b)
-            #a = sigmoid(np.dot(w, a)+b)
-            #a = softmax(np.dot(w, a)+b)
+        for i in range(len(self.biases)):
+            b = self.biases[i]
+            w = self.weights[i]
+            if i != len(self.biases) - 1:
+                a = self.func(np.dot(w,a) + b)
+            else:
+                a = softmax(np.dot(w,a) + b) #OUTPUT LAYER CLASSIFIER
         return a
+        
+       # for b, w in zip(self.biases, self.weights):
+       #    a = self.func(np.dot(w,a) + b)
+       # return a
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             lmbda = 0.0,
@@ -223,15 +230,25 @@ class Network(object):
         activation = x
         activations = [x] # list to store all the activations, layer by layer
         zs = [] # list to store all the z vectors, layer by layer
-        for b, w in zip(self.biases, self.weights):
-            z = np.dot(w, activation)+b
+        
+        for i in range(len(self.biases)): #we rewrite this loop because we need to detect the final layer
+            w=self.weights[i]
+            b=self.biases[i]
+            z=np.dot(w, activation) + b
             zs.append(z)
-            activation = self.func(z)
-            #activation = sigmoid(z)
-            #activation = softmax(z)
+            if i != len(self.biases) - 1:
+                activation = self.func(z)
+            else:
+                activation = softmax(z) #OUTPUT LAYER
             activations.append(activation)
+        
+    #    for b, w in zip(self.biases, self.weights):
+    #        z = np.dot(w, activation)+b
+    #        zs.append(z)
+    #        activation = self.func(z)
+    #        activations.append(activation)
         # backward pass
-        delta = (self.cost).delta(zs[-1], activations[-1], y)
+        delta = (self.cost).delta(zs[-1], activations[-1], y)   #For softmax, the initial delta is the same as with sigmoid
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
         # Note that the variable l in the loop below is used a little
@@ -282,6 +299,7 @@ class Network(object):
         return sum(int(x == y) for (x, y) in results)
 
     def total_cost(self, data, lmbda, convert=False):
+    #We use C = 1/n *  ||y - a^L||^2 + lambda / (2*n) sum(w^2)
         """Return the total cost for the data set ``data``.  The flag
         ``convert`` should be set to False if the data set is the
         training data (the usual case), and to True if the data set is
@@ -341,13 +359,27 @@ def sigmoid(z, derivative=False):
     else:
         return 1.0/(1.0+np.exp(-z))
 
-def sigmoid_prime(z):
-    """Derivative of the sigmoid function."""
-    return sigmoid(z)*(1-sigmoid(z))
+#def sigmoid_prime(z):
+#    """Derivative of the sigmoid function."""
+#    return sigmoid(z)*(1-sigmoid(z))
+
+def tanh(z, derivative=False):
+    z = np.tanh(z)
+    if derivative:
+        return 1 - np.power(z,2)
+    else:
+        return z
+
+def relu(z, derivative=False):
+    """Relu function: according to some dude on https://stats.stackexchange.com/questions/218542/which-activation-function-for-output-layer, relu is good for hidden layer. idk if thats true tho"""
+    if derivative:
+        return (z > 0).astype(float)
+    else:
+        return np.maximum(0,z)
 
 def softmax(x, derivative=False):
-    if derivative:
-        return np.ones(z.shape)
+    if derivative: #we never have to compute derivative because we use it only for the output layer
+        return np.ones(x.shape)
     else:
         """Compute the softmax of vector x in a numerically stable way."""
         shiftx = x - np.max(x)
@@ -358,5 +390,5 @@ def softmax(x, derivative=False):
 #    num = np.exp(z) 
 #    return num / sum(num)
     
-def softmax_prime(z):
-    return np.ones(z.shape)
+#def softmax_prime(z):
+#    return np.ones(z.shape)
