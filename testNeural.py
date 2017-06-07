@@ -1,4 +1,5 @@
 import numpy as np
+import ParseData as pad
 
 # sigmoid function
 def nonlin(x,deriv=False):
@@ -11,7 +12,7 @@ X = np.array([  [0,0,1],
                 [0,1,1],
                 [1,0,1],
                 [1,1,1] ])
-    
+
 # output dataset            
 y = np.array([[0,0,1,1]]).T
 
