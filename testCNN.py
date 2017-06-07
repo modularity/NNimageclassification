@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """
 Based on the tflearn example located here:
@@ -72,7 +71,7 @@ network = fully_connected(network, 392, activation='relu')
 network = dropout(network, 0.5)
 
 # Step 8: Fully-connected neural network with two outputs (0=isn't a bird, 1=is a bird) to make the final prediction
-network = fully_connected(network, 2, activation='softmax')
+network = fully_connected(network, 101, activation='softmax')
 
 # Tell tflearn how we want to train the network
 network = regression(network, optimizer='adam',
@@ -80,27 +79,48 @@ network = regression(network, optimizer='adam',
                      learning_rate=0.001)
 
 # Changing the size of Y and Y_test
-newY = []
 tempY = []
 for counter in range(len(Y)):
 	tempVar = resizeData(Y[counter][0])
 	tempY.append(tempVar)
 
-newYT = []
 tempYT = []
 for counter in range(len(Y)):
 	tempVar = resizeData(Y[counter][0])
 	tempYT.append(tempVar)
 
+
 Y = tempY
+Y = np.array(Y)
+Y = Y.astype('float32')
 Y_test = tempYT
+Y_test = np.array(Y_test)
+Y_test = Y_test.astype('float32')
+
+
+# Reshaping the two X data lists
+newX = []
+newXT = []
+for counter in range(len(X)):
+	newX.append(X[counter].reshape(28, 28))
+
+for counter in range(len(X_test)):
+	newXT.append(X_test[counter].reshape(28, 28))
+
+
+X = newX
+X = np.array(X)
+X = X.astype('float32')
+X_test = newXT
+X_test = np.array(X_test)
+X_test = X_test.astype('float32')
 
 # Wrap the network in a model object
 model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='bird-classifier.tfl.ckpt')
 
 # Train it! We'll do 50 training passes and monitor it as it goes.
 model.fit(X, Y, n_epoch=50, shuffle=True, validation_set=(X_test, Y_test),
-          show_metric=True, batch_size=84,
+          show_metric=True, batch_size=50,
           snapshot_epoch=True,
           run_id='bird-classifier')
 
