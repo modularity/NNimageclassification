@@ -61,7 +61,7 @@ network = max_pool_1d(network, 2)
 network = conv_1d(network, 56, 3, activation='relu')
 
 # Step 4: Convolution yet again
-network = conv_1d(network, 56, 3, activation='relu')
+network = conv_1d(network, 112, 3, activation='relu')
 
 # Step 5: Max pooling again
 network = max_pool_1d(network, 2)
@@ -140,27 +140,27 @@ newValLabel = newValLabel.astype('float32')
 model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='object-classifier.ckpt')
 
 # Train it! We'll do 50 training passes and monitor it as it goes.
-model.fit(X, Y, n_epoch=50, shuffle=True, validation_set=(newVal, newValLabel),
-		  show_metric=True, batch_size=101,
+model.fit(X, Y, n_epoch=50, shuffle=False, validation_set=(X_test, Y_test),
+		  show_metric=True, batch_size=50,
 		  snapshot_epoch=False,
 		  run_id='object-classifier')
 
 # Save model when training is complete to a file
 model.save("object-classifier")
 
-print("Network trained and saved as object-classifier!")
+# print("Network trained and saved as object-classifier!")
 
-result = model.predict(X_test)
+# result = model.predict(X_test)
 
-index = []
-for array in result:
-	array = np.array(array)
-	index.append(array.argmin())
+# index = []
+# for array in result:
+# 	array = np.array(array)
+# 	index.append(array.argmin())
 
-match = 0
+# match = 0
 
-for counter in range(len(result)):
-	if (index[counter] == pad.test_labels[counter]):
-		match = match +1
+# for counter in range(len(result)):
+# 	if (index[counter] == pad.test_labels[counter]):
+# 		match = match +1
 
-print(float(match)/float(len(result)))
+# print(float(match)/float(len(result)))

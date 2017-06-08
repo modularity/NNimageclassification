@@ -85,7 +85,8 @@ model.fit(X, Y, n_epoch=100, shuffle=True, validation_set=(X_test, Y_test),
           snapshot_epoch=True,
           run_id='bird-classifier')
 
-
 # Save model when training is complete to a file
 model.save("bird-classifier.tfl")
 print("Network trained and saved as bird-classifier.tfl!")
+
+evaluate(X_test, Y_test, batch_size = 100)
