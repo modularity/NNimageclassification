@@ -39,16 +39,7 @@ class CrossEntropyCost(object):
         """
         if a.ndim == 1: #ensure that it's a column vector
             a = a[np.newaxis]
-        return np.sum(-np.sum(y * np.log(a),axis=1))
-
-    @staticmethod
-    def delta(z, a, y):
-        """Return the error delta from the output layer.  Note that the
-        parameter ``z`` is not used by the method.  It is included in
-        the method's parameters in order to make the interface
-        consistent with the delta method for other cost classes.
-        """
-        return (a-y)
+        return np.sum(-np.nan_to_num(np.sum(y * np.log(a),axis=1)))
 
 #### Main Network class
 class Network(object):
