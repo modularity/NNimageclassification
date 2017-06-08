@@ -1,4 +1,4 @@
-"""network2.py
+"""network3.py
 ~~~~~~~~~~~~~~
 
 An improved version of network.py, implementing the stochastic
@@ -53,7 +53,7 @@ class CrossEntropyCost(object):
         """
         if a.ndim == 1: #ensure that it's a column vector
             a = a[np.newaxis]
-        return np.sum(-np.sum(y * np.log(a),axis=1))
+        return np.sum(-np.nan_to_num(np.sum(y * np.log(a),axis=1)))
       #  return np.sum(np.nan_to_num(-y*np.log(a)-(1-y)*np.log(1-a)))
 
     @staticmethod
