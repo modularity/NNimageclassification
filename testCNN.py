@@ -48,8 +48,8 @@ img_aug.add_random_blur(sigma_max=3.)
 # Define our network architecture:
 
 network = input_data(shape=[None, 28, 28],
-                     data_preprocessing=img_prep,
-                     data_augmentation=img_aug)
+					 data_preprocessing=img_prep,
+					 data_augmentation=img_aug)
 
 # Step 1: Convolution
 network = conv_1d(network, 28, 3, activation='relu')
@@ -77,8 +77,8 @@ network = fully_connected(network, 101, activation='softmax')
 
 # Tell tflearn how we want to train the network
 network = regression(network, optimizer='adam',
-                     loss='categorical_crossentropy',
-                     learning_rate=0.001)
+					 loss='categorical_crossentropy',
+					 learning_rate=0.001)
 
 # Changing the size of Y and Y_test
 tempY = []
@@ -141,11 +141,26 @@ model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='object-clas
 
 # Train it! We'll do 50 training passes and monitor it as it goes.
 model.fit(X, Y, n_epoch=50, shuffle=True, validation_set=(newVal, newValLabel),
-          show_metric=True, batch_size=50,
-          snapshot_epoch=False,
-          run_id='object-classifier')
+		  show_metric=True, batch_size=101,
+		  snapshot_epoch=False,
+		  run_id='object-classifier')
 
 # Save model when training is complete to a file
 model.save("object-classifier")
 
 print("Network trained and saved as object-classifier!")
+
+result = model.predict(X_test)
+
+index = []
+for array in result:
+	array = np.array(array)
+	index.append(array.argmin())
+
+match = 0
+
+for counter in range(len(result)):
+	if (index[counter] == pad.test_labels[counter]):
+		match = match +1
+
+print(float(match)/float(len(result)))
