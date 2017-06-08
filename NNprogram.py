@@ -4,19 +4,30 @@
 """
 
 import Dataset
-from Network import Network
+import Network
 
 
-(train, val, test) = Dataset.load_data()
+(train, valid, test) = Dataset.load_data()
 
-trainNN = Network([2, 3, 1])
+''' call the pca() function with the dataset label you want to run pca on
+        classnames (1, 101)
+        train_data (4100, 784)
+        val_data (2264, 784)
+        test_data (2307, 784)
+        train_labels (4100, 1)
+        val_labels (2264, 1)
+        test_labels (2307, 1)
+'''
+Dataset.pca("train_data")
+
+trainNN = Network.Network([784,442,101], activationFunc=Network.relu)
 
 '''SGD input: training_data, epochs, mini_batch_size, eta, lmbda = 0.0,
         evaluation_data=None,
-        monitor_evaluation_cost=False,
-        monitor_evaluation_accuracy=False,
-        monitor_training_cost=False,
-        monitor_training_accuracy=False)
+        monitor_evaluation_cost=True,
+        monitor_evaluation_accuracy=True,
+        monitor_training_cost=True,
+        monitor_training_accuracy=True)
 output: tuple containing four lists
         the (per-epoch) costs on the evaluation data,
         the accuracies on the evaluation data,
@@ -24,6 +35,4 @@ output: tuple containing four lists
         and the accuracies on the training data.
     ! list empty if the corresponding flag is not set !
 '''
-(eCost, accurEval, costTrain, accurTrain) = trainNN.SGD(train, 10, 2, .5, None, False, False, True, True)
-
-print(eCost)
+#eCost, accurEval, costTrain, accurTrain = trainNN.SGD(train,30,10,.1,30,valid)
