@@ -25,7 +25,7 @@ class QuadraticCost(object):
     @staticmethod
     def delta(z, a, y):
         """Return the error delta from the output layer."""
-        return (a-y) * softmax_prime(z)
+        return (a-y) * sigmoid_prime(z) #Note: softmax_prime is probably wrong but we don't use quadratic cost anyways so I'm leaving this as sigmoid_prime.
 
 class CrossEntropyCost(object):
     @staticmethod
@@ -40,6 +40,15 @@ class CrossEntropyCost(object):
         if a.ndim == 1: #ensure that it's a column vector
             a = a[np.newaxis]
         return np.sum(-np.nan_to_num(np.sum(y * np.log(a),axis=1)))
+
+    @staticmethod
+    def delta(z, a, y):
+        """Return the error delta from the output layer.  The
+        parameter ``z`` is not used by the method, but is included into make the interface
+        consistent with the delta method for other cost classes.
+        delta is the same regardless of whether the output layer is softmax or sigmoid.
+        """
+        return (a-y)
 
 #### Main Network class
 class Network(object):
@@ -101,17 +110,13 @@ class Network(object):
                 a = softmax(np.dot(w,a) + b) #OUTPUT LAYER CLASSIFIER
         return a
 
-       # for b, w in zip(self.biases, self.weights):
-       #    a = self.func(np.dot(w,a) + b)
-       # return a
-
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             lmbda = 0.0,
             evaluation_data=None,
-            monitor_evaluation_cost=False,
-            monitor_evaluation_accuracy=False,
-            monitor_training_cost=False,
-            monitor_training_accuracy=False):
+            monitor_evaluation_cost=True,
+            monitor_evaluation_accuracy=True,
+            monitor_training_cost=True,
+            monitor_training_accuracy=True):
         """Train the neural network using mini-batch stochastic gradient
         descent.  The ``training_data`` is a list of tuples ``(x, y)``
         representing the training inputs and the desired outputs.  The

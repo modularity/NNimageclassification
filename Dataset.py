@@ -39,9 +39,9 @@ def load_data():
     val_inputs = [np.reshape(x, (784, 1)) for x in val_data]
     test_inputs = [np.reshape(x, (784, 1)) for x in test_data]
 
-    train = zip(training_inputs, train_labels)
-    val = zip(val_inputs, val_labels)
-    test=zip(test_inputs, test_labels)
+    train = zip(training_inputs, training_labels)
+    val = zip(val_inputs, val_labels.flatten())
+    test=zip(test_inputs, test_labels.flatten())
     return (train, val, test)
 
 def vectorized_result(j):
