@@ -9,10 +9,8 @@
         val_labels (2264, 1)
         test_labels (2307, 1)
 """
-
 import scipy.io
 import numpy as np
-from matplotlib.mlab import PCA
 import matplotlib.pyplot as plt
 
 def load_data():
@@ -56,8 +54,7 @@ def pca(dataset):
     # load file
     mat2 = scipy.io.loadmat('caltech101_silhouettes_28_split1.mat')
     # parse dataset
-    X = mat2[dataset]
-    type(X) #(4100L, 784L)
+    X = mat2[dataset] #(4100L, 784L)
 
     '''
     results = mlab.PCA(data)

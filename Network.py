@@ -1,10 +1,10 @@
 """
     A network for multiple classes, implementing the
-    stochastic gradient descent learning algorithm with softmax for a feedforward neural network.
+    stochastic gradient descent learning algorithm
+    with sigmoid, relu, tanh, and softmax activation functions for a feedforward neural network.
     Built with cross-entropy cost function, regularization, and initialization of network weights.
 """
 
-#### Libraries
 # Standard library
 import json
 import random
@@ -15,7 +15,6 @@ import numpy as np
 
 #### Define the quadratic and cross-entropy cost functions
 class QuadraticCost(object):
-
     @staticmethod
     def fn(a, y):
         """Return the cost associated with an output ``a`` and desired output
@@ -26,10 +25,9 @@ class QuadraticCost(object):
     @staticmethod
     def delta(z, a, y):
         """Return the error delta from the output layer."""
-        return (a-y) * softma_prime(z)
+        return (a-y) * softmax_prime(z)
 
 class CrossEntropyCost(object):
-
     @staticmethod
     def fn(a, y):
         """Return the cost associated with an output ``a`` and desired output
@@ -39,7 +37,9 @@ class CrossEntropyCost(object):
         returns nan.  The np.nan_to_num ensures that that is converted
         to the correct value (0.0).
         """
-        return np.sum(np.nan_to_num(-y*np.log(a)-(1-y)*np.log(1-a)))
+        if a.ndim == 1: #ensure that it's a column vector
+            a = a[np.newaxis]
+        return np.sum(-np.sum(y * np.log(a),axis=1))
 
     @staticmethod
     def delta(z, a, y):
@@ -53,20 +53,21 @@ class CrossEntropyCost(object):
 #### Main Network class
 class Network(object):
 
-    def __init__(self, sizes, cost=CrossEntropyCost):
+    def __init__(self, sizes, activationFunc, cost=CrossEntropyCost):
         """The list ``sizes`` contains the number of neurons in the respective
         layers of the network.  For example, if the list was [2, 3, 1]
         then it would be a three-layer network, with the first layer
         containing 2 neurons, the second layer 3 neurons, and the
         third layer 1 neuron.  The biases and weights for the network
         are initialized randomly, using
-        ``self.default_weight_initializer`` (see docstring for that
-        method).
+        ``self.default_weight_initializer``
+
         """
         self.num_layers = len(sizes)
         self.sizes = sizes
         self.default_weight_initializer()
         self.cost=cost
+        self.func = activationFunc
 
     def default_weight_initializer(self):
         """Initialize each weight using a Gaussian distribution with mean 0
@@ -90,21 +91,28 @@ class Network(object):
         Note that the first layer is assumed to be an input layer, and
         by convention we won't set any biases for those neurons, since
         biases are only ever used in computing the outputs from later
-        layers.
-        This weight and bias initializer uses the same approach as in
-        Chapter 1, and is included for purposes of comparison.  It
-        will usually be better to use the default weight initializer
+        layers. It will usually be better to use the default weight initializer
         instead.
         """
         self.biases = [np.random.randn(y, 1) for y in self.sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(self.sizes[:-1], self.sizes[1:])]
 
+
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
-        for b, w in zip(self.biases, self.weights):
-            a = softmax(np.dot(w, a)+b)
+        for i in range(len(self.biases)):
+            b = self.biases[i]
+            w = self.weights[i]
+            if i != len(self.biases) - 1:
+                a = self.func(np.dot(w,a) + b)
+            else:
+                a = softmax(np.dot(w,a) + b) #OUTPUT LAYER CLASSIFIER
         return a
+
+       # for b, w in zip(self.biases, self.weights):
+       #    a = self.func(np.dot(w,a) + b)
+       # return a
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             lmbda = 0.0,
@@ -135,31 +143,36 @@ class Network(object):
         n = len(training_data)
         evaluation_cost, evaluation_accuracy = [], []
         training_cost, training_accuracy = [], []
-        for j in range(epochs):
+        for j in xrange(epochs):
             random.shuffle(training_data)
             mini_batches = [
                 training_data[k:k+mini_batch_size]
-                for k in range(0, n, mini_batch_size)]
+                for k in xrange(0, n, mini_batch_size)]
             for mini_batch in mini_batches:
-                self.update_mini_batch(mini_batch, eta, lmbda, len(training_data))
-            print ("Epoch %s training complete" % j)
+                self.update_mini_batch(
+                    mini_batch, eta, lmbda, len(training_data))
+            print "Epoch %s training complete" % j
             if monitor_training_cost:
                 cost = self.total_cost(training_data, lmbda)
                 training_cost.append(cost)
-                print ("Cost on training data: {}".format(cost))
+                print "Cost on training data: {}".format(cost)
             if monitor_training_accuracy:
                 accuracy = self.accuracy(training_data, convert=True)
                 training_accuracy.append(accuracy)
-                print ("Accuracy on training data: {} / {}".format(accuracy, n))
+                print "Accuracy on training data: {} / {}".format(
+                    accuracy, n)
             if monitor_evaluation_cost:
                 cost = self.total_cost(evaluation_data, lmbda, convert=True)
                 evaluation_cost.append(cost)
-                print ("Cost on evaluation data: {}".format(cost))
+                print "Cost on evaluation data: {}".format(cost)
             if monitor_evaluation_accuracy:
                 accuracy = self.accuracy(evaluation_data)
                 evaluation_accuracy.append(accuracy)
-                print ("Accuracy on evaluation data: {} / {}".format(self.accuracy(evaluation_data), n_data))
-        return evaluation_cost, evaluation_accuracy, training_cost, training_accuracy
+                print "Accuracy on evaluation data: {} / {}".format(
+                    self.accuracy(evaluation_data), n_data)
+            print
+        return evaluation_cost, evaluation_accuracy, \
+            training_cost, training_accuracy
 
     def update_mini_batch(self, mini_batch, eta, lmbda, n):
         """Update the network's weights and biases by applying gradient
@@ -181,8 +194,8 @@ class Network(object):
 
     def backprop(self, x, y):
         """Return a tuple ``(nabla_b, nabla_w)`` representing the
-        gradient for the cost function C_x.  ``nabla_b`` and
-        ``nabla_w`` are layer-by-layer lists of numpy arrays, similar
+        gradient for the cost function C_x.
+        ``nabla_b`` and ``nabla_w`` are layer-by-layer lists of numpy arrays, similar
         to ``self.biases`` and ``self.weights``."""
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
@@ -190,24 +203,37 @@ class Network(object):
         activation = x
         activations = [x] # list to store all the activations, layer by layer
         zs = [] # list to store all the z vectors, layer by layer
-        for b, w in zip(self.biases, self.weights):
-            z = np.dot(w, activation)+b
+
+        for i in range(len(self.biases)): #we rewrite this loop because we need to detect the final layer
+            w=self.weights[i]
+            b=self.biases[i]
+            z=np.dot(w, activation) + b
             zs.append(z)
-            activation = softmax(z)
+            if i != len(self.biases) - 1:
+                activation = self.func(z)
+            else:
+                activation = softmax(z) #OUTPUT LAYER
             activations.append(activation)
+
+    #    for b, w in zip(self.biases, self.weights):
+    #        z = np.dot(w, activation)+b
+    #        zs.append(z)
+    #        activation = self.func(z)
+    #        activations.append(activation)
         # backward pass
-        delta = (self.cost).delta(zs[-1], activations[-1], y)
+        delta = (self.cost).delta(zs[-1], activations[-1], y)   #For softmax, the initial delta is the same as with sigmoid
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
-        # Note that the variable l in the loop below is used a little
-        # differently to the notation in Chapter 2 of the book.  Here,
+
         # l = 1 means the last layer of neurons, l = 2 is the
         # second-last layer, and so on.  It's a renumbering of the
         # scheme in the book, used here to take advantage of the fact
         # that Python can use negative indices in lists.
-        for l in range(2, self.num_layers):
+        for l in xrange(2, self.num_layers):
             z = zs[-l]
-            sp=softmax_prime(z)
+            sp = self.func(z, True)
+            #sp = sigmoid_prime(z)
+            #sp=softmax_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
@@ -218,18 +244,17 @@ class Network(object):
         network outputs the correct result. The neural network's
         output is assumed to be the index of whichever neuron in the
         final layer has the highest activation.
+
         The flag ``convert`` should be set to False if the data set is
         validation or test data (the usual case), and to True if the
         data set is the training data. The need for this flag arises
         due to differences in the way the results ``y`` are
         represented in the different data sets.  In particular, it
         flags whether we need to convert between the different
-        representations.  It may seem strange to use different
-        representations for the different data sets.  Why not use the
-        same representation for all three data sets?  It's done for
-        efficiency reasons -- the program usually evaluates the cost
-        on the training data and the accuracy on other data sets.
-        These are different types of computations, and using different
+        representations. It's done for efficiency reasons --
+        the program usually evaluates the cost on the training data
+        and the accuracy on other data sets. These are different
+        types of computations, and using different
         representations speeds things up.
         """
         if convert:
@@ -290,9 +315,32 @@ def vectorized_result(j):
     e[j] = 1.0
     return e
 
-def softmax(z):
-    num = np.exp(z)
-    return num / sum(num)
+# ACTIVATION FUNCTIONS
+def sigmoid(z, derivative=False):
+    """The sigmoid function."""
+    if derivative:
+        return sigmoid(z) * (1 - sigmoid(z))
+    else:
+        return 1.0/(1.0+np.exp(-z))
 
-def softmax_prime(z):
-    return softmax(z) - np.exp(z)
+def tanh(z, derivative=False):
+    z = np.tanh(z)
+    if derivative:
+        return 1 - np.power(z,2)
+    else:
+        return z
+
+def relu(z, derivative=False):
+    if derivative:
+        return (z > 0).astype(float)
+    else:
+        return np.maximum(0,z)
+
+def softmax(x, derivative=False):
+    if derivative: #we never have to compute derivative because we use it only for the output layer
+        return np.ones(x.shape)
+    else:
+        """Compute the softmax of vector x in a numerically stable way."""
+        shiftx = x - np.max(x)
+        exps = np.exp(shiftx)
+        return exps / np.sum(exps)

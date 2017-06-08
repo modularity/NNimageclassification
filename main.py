@@ -11,7 +11,7 @@ net=network3.Network([784,442,101], activationFunc=network3.sigmoid)
 #really we're supposed to do net.SGD(train,30,10,0.5,5,valid), then feedforward the test data. woops.
 #Anyways the result for this was accurancy: 1468/2307. theres some overfitting since we're using that as our evaluation data
 
-#TRIAL 0: 
+#TRIAL 0:
 #net.SGD(train,30,10,0.5,5,valid)
 #print net.accuracy(test)
 #the way you're supposed to do it. 61.64% accuracy on test data. Had 61.97% accuracy on validation data, 82% accuracy on training data
@@ -30,38 +30,38 @@ net=network3.Network([784,442,101], activationFunc=network3.sigmoid)
 #1500/2307, 4076/4100 acc on training, 1501/2264 for validation
 
 #TRIAL 3:
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,100,0.3,5,valid) 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,100,0.3,5,valid)
 #thefile=open('resBatch100LrnRate0pt3Reg5.txt','w') #specify a new file for each trial.
 #4097/4100 acc on training, 1510/2264 on validation. didn't get test accuracy.
 
 #TRIAL 4:
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,1,5,valid) 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,1,5,valid)
 #didn't let it complete because it was obviously bad. cost at 0.9285, wasn't changing
 
 #TRIAL 5:
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.2,5,valid) 
-#thefile=open('resBatch10LrnRate0pt2Reg5.txt','w') 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.2,5,valid)
+#thefile=open('resBatch10LrnRate0pt2Reg5.txt','w')
 #3952/4100 acc on training, 1543/2264 on validation. didnt get test accuracy. seems like slightly less overfitting than 0.3 case.
 
 #TRIAL 6:
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,5,valid) 
-#thefile=open('resBatch10LrnRate0pt1Reg5.txt','w') 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,5,valid)
+#thefile=open('resBatch10LrnRate0pt1Reg5.txt','w')
 #3737/4100 acc on training, 1539/2264 on validation (probably needs more epochs though). 1530 / 2307 on test data, which is 66%. less overfitting tho.
 
 #TRIAL 7:
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,50,10,.1,5,valid) 
-#thefile=open('resBatch10LrnRate0pt1Reg5Epochs50.txt','w') 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,50,10,.1,5,valid)
+#thefile=open('resBatch10LrnRate0pt1Reg5Epochs50.txt','w')
 #With 50 epochs:
 #4014/4100 accon training, 1540/2264 on validation (ok more epochs was not the problem). 1546/2307 on test data.
 
 #TRIAL 8:
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.5,5,valid) 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.5,5,valid)
 #thefile=open('resBatch10LrnRate0pt5Reg5v2.txt','w')
 #1540/2307 for test data (slight improvement i guess), 98% on training data, 69% on validation.
 
-#TRIAL 9: ACTIVATION FUNCTION RELU 
+#TRIAL 9: ACTIVATION FUNCTION RELU
 #net=network3.Network([784,442,101], activationFunc=network3.relu)
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,5,valid) 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,5,valid)
 #NOTE: at learning rate 0.5 it oscillated with error around 100
 #thefile=open('resBatch10LrnRate0pt1Reg5activRELU.txt','w')
 #1544/2264 validation, 4017/4100 on training. 1535 on test data
@@ -69,20 +69,20 @@ net=network3.Network([784,442,101], activationFunc=network3.sigmoid)
 
 #TRIAL 10: ACTIVATION FUNCTION TANH
 #net=network3.Network([784,442,101], activationFunc=network3.tanh)
-#NOTE: validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.5,5,valid) had it oscillate with error about 100 
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,5,valid) 
+#NOTE: validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.5,5,valid) had it oscillate with error about 100
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,5,valid)
 #thefile=open('resBatch10LrnRate0pt1Reg5activTANH.txt','w')
 #1540 /2264 on validation, 3995/4100 on training. 1546 on test data
 
 #TRIAL 11: ACTIVATION FUNCTION RELU, NO REGULARIZATION
 #net=network3.Network([784,442,101], activationFunc=network3.relu)
-#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,0,valid) 
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,0,valid)
 #thefile=open('resBatch10LrnRate0pt1Reg0activRELU.txt','w')
-#1540/2264 on validation, 4014/4100 on training 
+#1540/2264 on validation, 4014/4100 on training
 
 #TRIAL 12: ACTIVATION FUNCTION RELU, LOTS OF REGULARIZATION
 net=network3.Network([784,442,101], activationFunc=network3.relu)
-validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,30,valid) 
+validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,30,valid)
 thefile=open('resBatch10LrnRate0pt1Reg30activRELU.txt','w')
 #1544/2264 on validatoin, 4016 on training
 for item in trainCost:
