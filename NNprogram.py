@@ -85,10 +85,55 @@ net = Network.Network([784,442,101], activationFunc=Network.sigmoid)
 #1540/2264 on validation, 4014/4100 on training
 
 #TRIAL 12: ACTIVATION FUNCTION RELU, LOTS OF REGULARIZATION
-net=Network.Network([784,442,101], activationFunc=Network.relu)
-validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,30,valid)
-thefile=open('resBatch10LrnRate0pt1Reg30activRELU.txt','w')
-#1544/2264 on validatoin, 4016 on training
+#net=network3.Network([784,442,101], activationFunc=network3.relu)
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.1,30,valid)
+#thefile=open('resBatch10LrnRate0pt1Reg30activRELU.txt','w').
+#1544/2264 on validatoin, 4016 on training.
+
+#TRIAL 13: REDOING TRIAL 5
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.2,5,valid)
+#thefile=open('resBatch10LrnRate0pt2Reg5v2.txt','w')
+#1570/2264 for validation, 3929 for training. 1563 on test data
+
+#TRIAL 14: REDOIGN TRIAL 5, HIGH REGULARIZATION
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.2,50,valid)
+#thefile=open('resBatch10LrnRate0pt2Reg50.txt','w')
+#1544/2264 on validatoin, 4013 on training.
+
+#TRIAL 15: REDOING TRIAL 5, SLIGHTLY LOWER LEARNING RATE, MORE EPOCHS
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,40,10,.15,5,valid)
+#thefile=open('resBatch10LrnRate0pt15Reg5v2.txt','w')
+
+#TRIAL 16: REDOING TRIAL 5, HIGH BATCH SIZE
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,200,.2,5,valid)
+#thefile=open('resBatch200LrnRate0pt2Reg5.txt','w')
+#Very slow, but also avoids overfitting
+
+#TRIAL 17: REDOING TRIAL 5, HIGH LEARNING RATE
+#validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,1,5,valid)
+#thefile=open('resBatch10LrnRate1pt0Reg5.txt','w')
+#doesnt work
+
+#TRIAL 18: REDOING TRIAL 5, NAN-TO-NUM
+validCost,validAcc,trainCost,trainAcc = net.SGD(train,30,10,.2,5,valid)
+thefile=open('resBatch10LrnRate0pt2Reg5v3.txt','w')
+
+for item in trainCost:
+	thefile.write(str(item) + ",")
+thefile.write("\n")
+for item in trainAcc:
+	thefile.write(str(item) + ",") #train accuracy should be divided by 4100
+thefile.write("\n")
+for item in validCost:
+	thefile.write(str(item) + ",")
+thefile.write("\n")
+for item in validAcc:
+	thefile.write(str(item) + ",") #validation accuracy should be divided by 2264
+thefile.write("\n")
+thefile.write(str(net.accuracy(test)))
+
+#lines are printed in order of train cost, train acc, validcost, validacc
+
 for item in trainCost:
 	thefile.write(str(item) + ",")
 thefile.write("\n")
