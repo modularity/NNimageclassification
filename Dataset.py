@@ -12,8 +12,9 @@
 import scipy.io
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 
-def load_data():
+def load_data(preprocess=False):
 
     ''' #might need later
     mat = scipy.io.loadmat('caltech101_silhouettes_28.mat')
@@ -33,11 +34,18 @@ def load_data():
     val_data=mat2['val_data'] #(2264, 784)
     val_labels=mat2['val_labels'] -1 #(2264, 1)
 
-
-    training_inputs= [np.reshape(x, (784, 1)) for x in train_data]
+    if(preprocess):
+        pca=PCA(n_components=100).fit(train_data) #100x4100
+        train_data=pca.transform(train_data)
+        val_data=pca.transform(val_data)  
+        test_data=pca.transform(test_data)
+ 
+    n=len(train_data[0])
+    training_inputs= [np.reshape(x, (n, 1)) for x in train_data]
     training_labels = [vectorized_result(y) for y in train_labels]
-    val_inputs = [np.reshape(x, (784, 1)) for x in val_data]
-    test_inputs = [np.reshape(x, (784, 1)) for x in test_data]
+    val_inputs = [np.reshape(x, (n, 1)) for x in val_data]
+    test_inputs = [np.reshape(x, (n, 1)) for x in test_data]
+
 
     train = zip(training_inputs, training_labels)
     val = zip(val_inputs, val_labels.flatten())
