@@ -21,3 +21,7 @@ https://medium.com/@ageitgey/machine-learning-is-fun-part-3-deep-learning-and-co
 Instruction:
 
 $python testCNN.py
+
+Best Parameter: Conolution_1d 28 -> Maxpool -> Convolution_1d 56 ->  Convolution_1d 224 ->  Max_pool -> Fully_connected 1568 -> Fully_connected 101
+
+Best result: 90.54%

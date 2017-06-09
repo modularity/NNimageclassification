@@ -2,6 +2,7 @@
 """
 Based on the tflearn example located here:
 https://github.com/tflearn/tflearn/blob/master/examples/images/convnet_cifar10.py
+https://medium.com/@ageitgey/machine-learning-is-fun-part-3-deep-learning-and-convolutional-neural-networks-f40359318721
 """
 from __future__ import division, print_function, absolute_import
 
@@ -68,12 +69,12 @@ network = conv_1d(network, 112, 3, activation='relu')
 network = max_pool_1d(network, 2)
 
 # Step 6: Fully-connected 784 node neural network
-network = fully_connected(network, 196, activation='relu')
+network = fully_connected(network, 1568, activation='relu')
 
 # Step 7: Dropout - throw away some data randomly during training to prevent over-fitting
 #network = dropout(network, 1)
 
-# Step 8: Fully-connected neural network with two outputs (0=isn't a bird, 1=is a bird) to make the final prediction
+# Step 8: Fully-connected neural network with 101 outputs to make the final prediction
 network = fully_connected(network, 101, activation='softmax')
 
 # Tell tflearn how we want to train the network
@@ -138,7 +139,7 @@ newValLabel = newValLabel.astype('float32')
 
 
 # Wrap the network in a model object
-model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='object-classifier.ckpt')
+model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='object-classifier')
 
 # Train it! We'll do 50 training passes and monitor it as it goes.
 model.fit(X, Y, n_epoch=50, shuffle=False, validation_set=(X_test, Y_test),
