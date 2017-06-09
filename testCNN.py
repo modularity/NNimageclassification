@@ -63,14 +63,15 @@ network = conv_1d(network, 56, 3, activation='relu')
 # Step 4: Convolution yet again
 network = conv_1d(network, 112, 3, activation='relu')
 
+
 # Step 5: Max pooling again
 network = max_pool_1d(network, 2)
 
-# Step 6: Fully-connected 392 node neural network
-network = fully_connected(network, 392, activation='relu')
+# Step 6: Fully-connected 784 node neural network
+network = fully_connected(network, 196, activation='relu')
 
 # Step 7: Dropout - throw away some data randomly during training to prevent over-fitting
-network = dropout(network, 0.5)
+#network = dropout(network, 1)
 
 # Step 8: Fully-connected neural network with two outputs (0=isn't a bird, 1=is a bird) to make the final prediction
 network = fully_connected(network, 101, activation='softmax')
