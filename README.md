@@ -11,17 +11,13 @@ Neural Network for Image Classification final project for UCLA M156: Machine Lea
 	
 DUNLAP, LAUREN • HU, CARSON • LIU, JIACHEN
 
+Instruction to run Convolutional Neural network files:
 
-list of website file correspondence:
-http://www.pyimagesearch.com/2016/09/26/a-simple-neural-network-with-python-and-keras/  -- kerasNN
-
-https://medium.com/@ageitgey/machine-learning-is-fun-part-3-deep-learning-and-convolutional-neural-networks-f40359318721 -- mediumNN
-
-
-Instruction:
-
+$cd CNN
 $python testCNN.py
 
 Best Parameter: Conolution_1d 28 -> Maxpool -> Convolution_1d 56 ->  Convolution_1d 224 ->  Max_pool -> Fully_connected 1568 -> Fully_connected 101
 
 Best result: 90.54%
+
+required package: tensorlfow, tflearn, numpy, scipy
