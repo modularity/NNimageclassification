@@ -16,6 +16,3 @@ val_labels = images['val_labels']
 classnames = [];
 for classname in images['classnames'][0]:
 	classnames.append(classname[0].encode('ascii'))
-
-
-
